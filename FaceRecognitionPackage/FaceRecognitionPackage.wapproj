@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-
   <PropertyGroup Condition="'$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '15.0'">
     <VisualStudioVersion>15.0</VisualStudioVersion>
   </PropertyGroup>
-
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x86">
       <Configuration>Debug</Configuration>
@@ -47,30 +45,24 @@
       <Platform>AnyCPU</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-
   <PropertyGroup>
     <WapProjPath Condition="'$(WapProjPath)'==''">$(MSBuildExtensionsPath)\Microsoft\DesktopBridge\</WapProjPath>
   </PropertyGroup>
-
   <Import Project="$(WapProjPath)\Microsoft.DesktopBridge.props" />
-
   <PropertyGroup>
-    <ProjectGuid>fc7b65f6-850b-4bb8-a6f6-6478ebf08b2c</ProjectGuid>
+    <ProjectGuid>4209f20d-327f-4362-9cfb-02ecdc6d65ec</ProjectGuid>
     <TargetPlatformVersion>10.0.22621.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.14393.0</TargetPlatformMinVersion>
     <DefaultLanguage>en-US</DefaultLanguage>
-    
     <AppxPackageSigningEnabled>false</AppxPackageSigningEnabled>
-    <NoWarn>$(NoWarn);NU1702</NoWarn>    
+    <NoWarn>$(NoWarn);NU1702</NoWarn>
+    <EntryPointProjectUniqueName>..\FacialRecognition.csproj</EntryPointProjectUniqueName>
   </PropertyGroup>
-
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    
   </ItemGroup>
-
   <ItemGroup>
     <Content Include="Images\SplashScreen.scale-200.png" />
     <Content Include="Images\LockScreenLogo.scale-200.png" />
@@ -80,22 +72,11 @@
     <Content Include="Images\StoreLogo.png" />
     <Content Include="Images\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
-
-  <Applications>
-      <Application Id="App" Executable="FacialRecognition.exe" EntryPoint="FacialRecognition">
-        <uap:VisualElements 
-          DisplayName="Facial Recognition App" 
-          Description="This is Facial Recognition App for Information Technology III Project."
-          BackgroundColor="#FFFFFF" 
-          Square150x150Logo="Images\Square150x150Logo.scale-200.png" 
-          Square44x44Logo="Images\Square44x44Logo.scale-200.png" />
-      </Application>
-    </Applications>
-
   <Import Project="$(WapProjPath)\Microsoft.DesktopBridge.targets" />
-
   <ItemGroup>
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.3233" PrivateAssets="all" />
   </ItemGroup>
-
+  <ItemGroup>
+    <ProjectReference Include="..\FacialRecognition.csproj" />
+  </ItemGroup>
 </Project>
