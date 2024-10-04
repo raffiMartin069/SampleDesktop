@@ -114,7 +114,7 @@ jobs:
     #   run: echo "current_timestamp=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
 
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v3
       with:
         name: MSIX_Package-${{ github.run_id }}
         path: ${{ env.Wap_Project_Directory }}\AppPackages\**
