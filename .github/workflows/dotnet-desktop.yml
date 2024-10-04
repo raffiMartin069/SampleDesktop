@@ -70,6 +70,14 @@ jobs:
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v2
 
+    - name: Generate timestamp
+      id: timestamp
+      run: echo "current_timestamp=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
+
+    - name: Generate random string
+      id: random_string
+      run: echo "random_string=$(openssl rand -hex 6)" >> $GITHUB_ENV
+
 
     # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Restore the application
@@ -109,13 +117,9 @@ jobs:
     - name: Remove the pfx
       run: Remove-Item -path $env:Wap_Project_Directory\GitHubActionsWorkflow.pfx
 
-    - name: Generate timestamp
-      id: timestamp
-      run: echo "current_timestamp=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
-
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: MSIX_Package_${{ env.current_timestamp }}_${{ github.run_id }}_${{ github.run_number }}
+        name: MSIX_Package_${{ env.current_timestamp }}_${{ github.run_id }}_${{ env.random_string }}
         path: ${{ env.Wap_Project_Directory }}\AppPackages\**
 
