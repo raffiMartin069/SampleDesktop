@@ -24,6 +24,7 @@ jobs:
       Wap_Project_Path: FaceRecognitionPackage/FaceRecognitionPackage.wapproj
       TargetPlatform: ${{ matrix.TargetPlatform }}
       Configuration: ${{ matrix.configuration }}
+      OutputPath: $(System.DefaultWorkingDirectory)\output\${{ matrix.TargetPlatform }}\${{ matrix.configuration }}
 
     steps:
     - name: Checkout
@@ -31,7 +32,7 @@ jobs:
       with:
         fetch-depth: 0
 
-    # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
+    # Add MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v2
 
@@ -50,7 +51,7 @@ jobs:
 
     # Create the app package by building and packaging the Windows Application Packaging project
     - name: Create the app package
-      run: msbuild $env:Wap_Project_Path /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode /p:AppxBundle=$env:Appx_Bundle /p:PackageCertificateKeyFile=GitHubActionsWorkflow.pfx /p:PackageCertificatePassword=${{ secrets.Pfx_Key }}
+      run: msbuild $env:Wap_Project_Path /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode /p:AppxBundle=$env:Appx_Bundle /p:PackageCertificateKeyFile=GitHubActionsWorkflow.pfx /p:PackageCertificatePassword=${{ secrets.Pfx_Key }} /p:OutputPath=$env:OutputPath
       env:
         Appx_Bundle: Always
         Appx_Bundle_Platforms: x86|x64
@@ -59,7 +60,7 @@ jobs:
 
     # Build the Windows Application Packaging project for Dev and Prod_Sideload
     - name: Build the Windows Application Packaging Project (wapproj) for ${{ matrix.ChannelName }}
-      run: msbuild $env:Wap_Project_Directory/$env:Wap_Project_Name /p:Platform=$env:TargetPlatform /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:BuildMode /p:GenerateAppInstallerFile=$env:GenerateAppInstallerFile /p:AppInstallerUri=$env:AppInstallerUri /p:PackageCertificateKeyFile=$env:SigningCertificate /p:PackageCertificatePassword=${{ secrets.Pfx_Key }}
+      run: msbuild $env:Wap_Project_Directory/$env:Wap_Project_Name /p:Platform=$env:TargetPlatform /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:BuildMode /p:GenerateAppInstallerFile=$env:GenerateAppInstallerFile /p:AppInstallerUri=$env:AppInstallerUri /p:PackageCertificateKeyFile=$env:SigningCertificate /p:PackageCertificatePassword=${{ secrets.Pfx_Key }} /p:OutputPath=$env:OutputPath
       if: ${{ matrix.ChannelName }} != 'Prod_Store'
       env:
         BuildMode: SideLoadOnly
@@ -76,4 +77,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: MSIX_Package-${{ matrix.configuration }}-${{ github.run_id }}
-        path: ${{ env.Wap_Project_Directory }}\AppPackages
+        path: ${{ env.OutputPath }}
