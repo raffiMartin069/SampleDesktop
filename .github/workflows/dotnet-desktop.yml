@@ -83,6 +83,15 @@ jobs:
         $certificatePath = Join-Path -Path $env:Wap_Project_Directory -ChildPath GitHubActionsWorkflow.pfx
         [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
 
+    # Export the certificate to .cer format
+    - name: Export the certificate
+      run: |
+        $cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2
+        $cert.Import("$certificatePath", "${{ secrets.Pfx_Key }}", [System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::MachineKeySet)
+        $cerPath = Join-Path -Path $env:Wap_Project_Directory -ChildPath "ExportedCertificate.cer"
+        [IO.File]::WriteAllBytes("$cerPath", $cert.Export([System.Security.Cryptography.X509Certificates.X509ContentType]::Cert))
+        Write-Host "Certificate exported to $cerPath"
+
     # Create the app package by building and packaging the Windows Application Packaging project
     - name: Create the app package
       run: msbuild $env:Wap_Project_Path /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode /p:AppxBundle=$env:Appx_Bundle /p:PackageCertificateKeyFile=GitHubActionsWorkflow.pfx /p:PackageCertificatePassword=${{ secrets.Pfx_Key }}
