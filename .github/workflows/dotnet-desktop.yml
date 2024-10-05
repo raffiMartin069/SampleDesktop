@@ -76,12 +76,20 @@ jobs:
       env:
         Configuration: ${{ matrix.configuration }}
 
-    # Decode the base 64 encoded pfx and save the Signing_Certificate
     - name: Decode the pfx
       run: |
         $pfx_cert_byte = [System.Convert]::FromBase64String("${{ secrets.Base64_Encoded_Pfx }}")
         $certificatePath = Join-Path -Path $env:Wap_Project_Directory -ChildPath GitHubActionsWorkflow.pfx
         [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
+
+    # Export the certificate to .cer format
+    - name: Export the certificate
+      run: |
+        $cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2
+        $cert.Import("$certificatePath", "${{ secrets.Pfx_Key }}", [System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::MachineKeySet)
+        $cerPath = Join-Path -Path $env:Wap_Project_Directory -ChildPath "ExportedCertificate.cer"
+        [IO.File]::WriteAllBytes("$cerPath", $cert.Export([System.Security.Cryptography.X509Certificates.X509ContentType]::Cert))
+        Write-Host "Certificate exported to $cerPath"
 
     # Create the app package by building and packaging the Windows Application Packaging project
     - name: Create the app package
@@ -102,3 +110,12 @@ jobs:
       with:
         name: MSIX_Package-${{ matrix.configuration }}-${{ github.run_id }}
         path: ${{ env.Wap_Project_Directory }}\AppPackages
+
+
+    # Upload the exported certificate
+    - name: Upload exported certificate
+      uses: actions/upload-artifact@v4
+      with:
+        name: ExportedCertificate
+        path: ${{ env.Wap_Project_Directory }}\ExportedCertificate.cer
+
