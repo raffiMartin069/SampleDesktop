@@ -13,8 +13,6 @@ jobs:
     strategy:
       matrix:
         configuration: [Debug, Release]
-        ChannelName: [Dev, Prod_Sideload]
-        TargetPlatform: [x86, x64]
 
     runs-on: windows-latest  
     
@@ -22,9 +20,6 @@ jobs:
       Solution_Name: FacialRecognition.sln                         
       Wap_Project_Directory: FaceRecognitionPackage
       Wap_Project_Path: FaceRecognitionPackage/FaceRecognitionPackage.wapproj
-      TargetPlatform: ${{ matrix.TargetPlatform }}
-      Configuration: ${{ matrix.configuration }}
-      OutputPath: $(System.DefaultWorkingDirectory)\output\${{ matrix.TargetPlatform }}\${{ matrix.configuration }}
 
     steps:
     - name: Checkout
@@ -57,16 +52,6 @@ jobs:
         Appx_Bundle_Platforms: x86|x64
         Appx_Package_Build_Mode: SideLoadOnly
         Configuration: ${{ matrix.configuration }}
-
-    # Build the Windows Application Packaging project for Dev and Prod_Sideload
-    - name: Build the Windows Application Packaging Project (wapproj) for ${{ matrix.ChannelName }}
-      run: msbuild $env:Wap_Project_Directory/$env:Wap_Project_Name /p:Platform=$env:TargetPlatform /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:BuildMode /p:GenerateAppInstallerFile=$env:GenerateAppInstallerFile /p:AppInstallerUri=$env:AppInstallerUri /p:PackageCertificateKeyFile=$env:SigningCertificate /p:PackageCertificatePassword=${{ secrets.Pfx_Key }} /p:OutputPath=$env:OutputPath
-      if: ${{ matrix.ChannelName }} != 'Prod_Store'
-      env:
-        BuildMode: SideLoadOnly
-        Configuration: ${{ matrix.configuration }}
-        GenerateAppInstallerFile: True
-        TargetPlatform: ${{ matrix.TargetPlatform }}
 
     # Remove the pfx
     - name: Remove the pfx
