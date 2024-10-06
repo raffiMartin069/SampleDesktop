@@ -38,38 +38,15 @@ jobs:
       env:
         Configuration: ${{ matrix.configuration }}
 
-  publish:
-  
-    runs-on: windows-latest
-    
-    needs: build
-
-    strategy:
-        matrix:
-          configuration: [Debug, Release]
-          
-    steps:
     - name: Publish the app to .exe
       run: |
         msbuild $env:Solution_Name /p:Configuration=$env:Configuration /p:RuntimeIdentifier=win-x64 /p:SelfContained=true /p:PublishSingleFile=true /t:Publish
       env:
         Configuration: ${{ matrix.configuration }}
-
-  upload:
-    
-    runs-on: windows-latest
-
-    needs: publish
-    
-    strategy:
-      matrix:
-        configuration: [Debug, Release]
-  
-    steps:
+        
     - name: Upload .exe artifact
       uses: actions/upload-artifact@v2
       with:
         name: published-app
         path: |
           FaceRecognitionPackage/bin/${{ matrix.configuration }}/netcoreapp3.1/win-x64/publish/FaceRecognitionPackage.exe
-
