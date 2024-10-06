@@ -14,7 +14,7 @@ namespace FacialRecognition
 	{
 		public Form1()
 		{
-			InitializeComponent()
+			InitializeComponent();
 		}
 	}
 }
