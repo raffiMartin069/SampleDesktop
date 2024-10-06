@@ -32,6 +32,12 @@ jobs:
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v2
 
+    # Clean the solution to remove existing build artifacts
+    - name: Clean the solution
+      run: msbuild $env:Solution_Name /t:Clean /p:Configuration=$env:Configuration
+      env:
+        Configuration: ${{ matrix.configuration }}
+
     # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Restore the application
       run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
