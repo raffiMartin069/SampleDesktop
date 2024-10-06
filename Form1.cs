@@ -16,5 +16,5 @@ namespace FacialRecognition
 		{
 			InitializeComponent();
 		}
-	}
+	}.
 }
